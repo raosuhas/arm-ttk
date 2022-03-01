@@ -94,13 +94,7 @@ Write-FormatView -Action {
             if ($line -is [Management.Automation.ErrorRecord] -or $line -is [Exception]) {
                 $msg = "$azoErrorStatus$(' ' * $indent)$line"
                 if ($line.Location) {
-                    $msg += " [ Line: $($line.Location.Line), Column: $($line.Location.Column) ]"
-                }
-                elseif ($line.TargetObject.JsonPath) {
-                    $resolved = Resolve-JSONContent -JSONPath $line.TargetObject.JsonPath -JSONText $testOut.File.Text
-                    if ($resolved) {
-                        $msg += " [ Line: $($resolved.Line), Column: $($resolved.Column) ]"
-                    }
+                    $msg += " Line: $($line.Location.Line), Column: $($line.Location.Column)"
                 }
 
                 if ($CanUseColor) {

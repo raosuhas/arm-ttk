@@ -62,8 +62,7 @@ foreach ($id in $ids) {
         "metricId",                    # Microsoft.ServiceBus/namespaces
         "requestedServiceObjectiveId", # Microsoft.Sql/servers/databases
         "groupId",                     # Microsoft.DataFactory/factories/managedVirtualNetworks/managedPrivateEndpoints
-        "sid",                         # Microsoft.Sql/servers/administrators/activeDirectory
-        "ruleId"                          # Microsoft.Network/applicationGatewayWebApplicationFirewallPolicies
+        "sid"                          # Microsoft.Sql/servers/administrators/activeDirectory
     )
 
     if ($exceptions -contains $myIdFieldName) {
