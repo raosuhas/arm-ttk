@@ -16,8 +16,6 @@ param(
 $TemplateObject
 )
 
-$MarketplaceWarning = $false
-
 $deploymentResources = $TemplateObject.resources | 
     Find-JsonContent -Key type -Value 'Microsoft.Resources/deployments'
 
@@ -26,14 +24,14 @@ foreach ($dr in $deploymentResources) {
     $dbg = $dr.properties.debugSetting.detailLevel
     if ($dbg) {
         if ($dbg -is [string] -and  $dbg -ne 'None') {
-            Write-TtkMessage -MarketplaceWarning $MarketplaceWarning "Deployment Resources must have no DebugSettings property, or must set it to 'None'" -TargetObject $dr -ErrorId "Deployment.Resource.Has.DebugSetting"
+            Write-Error "Deployment Resources must have no DebugSettings property, or must set it to 'None'" -TargetObject $dr -ErrorId "Deployment.Resource.Has.DebugSetting"
         }
         elseif (
             $dbg -isnot [string] -and 
             $dbg -and 
             $dbg -ne 'None'
         ) {
-            Write-TtkMessage -MarketplaceWarning $MarketplaceWarning "Deployment Resources must have no DebugSettings.logDetail property, or must set it to 'None'" -TargetObject $dr -ErrorId "Deployment.Resource.Has.LogDetail"
+            Write-Error "Deployment Resources must have no DebugSettings.logDetail property, or must set it to 'None'" -TargetObject $dr -ErrorId "Deployment.Resource.Has.LogDetail"
         }
     }
 }

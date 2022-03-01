@@ -17,8 +17,6 @@ $CreateUIDefinitionObject,
 $MainTemplateParameters
 )
 
-$MarketplaceWarning = $false
-
 # test is broken so turning it off for now...
 #Write-Warning "Skipping Test..."
 #break
@@ -51,7 +49,7 @@ foreach ($selector in $sizeSelectors) { # Then walk each selector,
     }
 
     if (-not $theOutput) {
-        Write-TtkMessage -MarketplaceWarning $MarketplaceWarning "Could not find VM SizeSelector '$($selector.Name)' in outputs" -TargetObject $selector
+        Write-Error "Could not find VM SizeSelector '$($selector.Name)' in outputs" -TargetObject $selector
         continue
     }
 
@@ -59,7 +57,7 @@ foreach ($selector in $sizeSelectors) { # Then walk each selector,
 
     # If we couldn't, error out.
     if (-not $MainTemplateParam) {
-        Write-TtkMessage -MarketplaceWarning $MarketplaceWarning "Output '$($theOutput.Name)' is missing from main template parameters "-TargetObject $theOutput
+        Write-Error "Output '$($theOutput.Name)' is missing from main template parameters "-TargetObject $theOutput
         continue
     }
 
@@ -69,7 +67,7 @@ foreach ($selector in $sizeSelectors) { # Then walk each selector,
             $selector.constraints.allowedsizes -notcontains $MainTemplateParam.defaultValue # and they do not contain the default value.
         ) {
             # If that's the case, write an error.
-            Write-TtkMessage -MarketplaceWarning $MarketplaceWarning "VM Size selector '$($selector.Name)' does not allow for the default value $($MainTemplateParam.defaultValue) used in the main template" 
+            Write-Error "VM Size selector '$($selector.Name)' does not allow for the default value $($MainTemplateParam.defaultValue) used in the main template" 
         }
     }
 }

@@ -14,8 +14,6 @@ param(
     $TemplateText
 )
 
-$MarketplaceWarning = $true
-
 $exprStrOrQuote = [Regex]::new('(?<!\\)[\[\"]', 'RightToLeft')
 foreach ($variable in $TemplateObject.variables.psobject.properties) {
     
@@ -24,12 +22,12 @@ foreach ($variable in $TemplateObject.variables.psobject.properties) {
     if ($variable.name -ne 'copy' -and $variable.value.copy -eq $null) {        
         $foundRefs = $TemplateText | ?<ARM_Variable> -Variable $variable.Name        
         if (-not $foundRefs) {
-            Write-TtkMessage -MarketplaceWarning $MarketplaceWarning -Message "Unreferenced variable: $($Variable.Name)" -ErrorId Variables.Must.Be.Referenced -TargetObject $variable
+            Write-Error -Message "Unreferenced variable: $($Variable.Name)" -ErrorId Variables.Must.Be.Referenced -TargetObject $variable
         } else {
             foreach ($fr in $foundRefs) {
                 $foundQuote =$exprStrOrQuote.Match($TemplateText, $fr.Index)                
                 if ($foundQuote.Value -eq '"') {
-                    Write-TtkMessage -MarketplaceWarning $MarketplaceWarning -Message "Variable reference is not contained within an expression: $($copyItem.Name)" -ErrorId Variables.Must.Be.Referenced.In.Expression -TargetObject $copyItem
+                    Write-Error -Message "Variable reference is not contained within an expression: $($copyItem.Name)" -ErrorId Variables.Must.Be.Referenced.In.Expression -TargetObject $copyItem
                 }
             }
         }        
@@ -53,13 +51,13 @@ foreach ($variable in $TemplateObject.variables.psobject.properties) {
                     $isOk = $false
                 }
                 if (-not $isOk) {
-                    Write-TtkMessage -MarketplaceWarning $MarketplaceWarning -Message "Unreferenced variable: $($copyItem.Name)" -ErrorId Variables.Must.Be.Referenced -TargetObject $copyItem
+                    Write-Error -Message "Unreferenced variable: $($copyItem.Name)" -ErrorId Variables.Must.Be.Referenced -TargetObject $copyItem
                 }
             } else {
                 foreach ($fr in $foundRefs) {
                     $foundQuote = $exprStrOrQuote.Match($TemplateText, $fr.Index)
                     if ($foundQuote.Value -eq '"') {
-                        Write-TtkMessage -MarketplaceWarning $MarketplaceWarning -Message "Variable reference is not contained within an expression: $($copyItem.Name)" -ErrorId Variables.Must.Be.Referenced.In.Expression -TargetObject $copyItem
+                        Write-Error -Message "Variable reference is not contained within an expression: $($copyItem.Name)" -ErrorId Variables.Must.Be.Referenced.In.Expression -TargetObject $copyItem
                     }
                 }
             }

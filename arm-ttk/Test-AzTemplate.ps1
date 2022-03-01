@@ -150,16 +150,9 @@ Each test script has access to a set of well-known variables:
 
     # If set, will run tests in Pester.
     [switch]
-    $Pester,
-    
-    # If set, will run tests in Marketplace mode
-    [bool]
-    $MarketplaceMode = $False)
+    $Pester)
 
     begin {
-        
-        $global:MarketplaceMode = $MarketplaceMode
-
         # First off, let's get all of the built-in test scripts.
         $testCaseSubdirectory = 'testcases'
         $myLocation =  $MyInvocation.MyCommand.ScriptBlock.File

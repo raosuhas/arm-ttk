@@ -18,8 +18,6 @@ param(
     [switch]$IsMainTemplate
 )
 
-$MarketplaceWarning = $false
-
 # initialize TemplateTextWithoutLocationParameter for the case where there is no parameter object in the template (test is below)
 $TemplateWithoutLocationParameter = $TemplateText 
 
@@ -38,7 +36,7 @@ if ($TemplateObjectCopy.parameters.psobject -ne $null) {
 }
 # All location parameters must be of type "string" in the parameter declaration
 if ($locationParameter -ne $null -and $locationParameter.type -ne "string") {
-    Write-TtkMessage -MarketplaceWarning $MarketplaceWarning "The location parameter must be a 'string' type in the parameter declaration `"$($locationParameter.type)`"" -ErrorId Location.Parameter.TypeMisMatch -TargetObject $parameter
+    Write-Error "The location parameter must be a 'string' type in the parameter declaration `"$($locationParameter.type)`"" -ErrorId Location.Parameter.TypeMisMatch -TargetObject $parameter
 }
 
 # In mainTemplate:
@@ -49,7 +47,7 @@ if ($IsMainTemplate) {
         "$($locationParameter.defaultvalue)".Trim() -ne '[resourceGroup().location]' -and 
         "$($locationParameter.defaultvalue)".Trim() -ne 'global' -and 
         "$($locationParameter.defaultvalue)".Trim() -ne '[deployment().location]') {
-        Write-TtkMessage -MarketplaceWarning $MarketplaceWarning "The defaultValue of the location parameter in the main template must not be a specific location. `
+        Write-Error "The defaultValue of the location parameter in the main template must not be a specific location. `
                          The default value must be [resourceGroup().location], [deployment().location] or 'global'. It is `"$($locationParameter.defaultValue)`"" -ErrorId Location.Parameter.Hardcoded -TargetObject $parameter
     }
     # In all other templates:
@@ -58,7 +56,7 @@ if ($IsMainTemplate) {
 }
 else {
     if ($locationParameter.defaultValue -ne $null) { 
-        Write-TtkMessage -MarketplaceWarning $MarketplaceWarning "The location parameter of nested templates must not have a defaultValue property. It is `"$($locationParameter.defaultValue)`"" -ErrorId Location.Parameter.DefaultValuePresent -TargetObject $parameter
+        Write-Error "The location parameter of nested templates must not have a defaultValue property. It is `"$($locationParameter.defaultValue)`"" -ErrorId Location.Parameter.DefaultValuePresent -TargetObject $parameter
     }   
 }
 
@@ -70,6 +68,6 @@ if ($TemplateWithoutLocationParameter -like '*resourceGroup().location*' # -or
     # $TemplateWithoutLocationParameter -like '*deployment().location*'
 ) {
     # If it did, write an error
-    Write-TtkMessage -MarketplaceWarning $MarketplaceWarning "$TemplateFileName must use the location parameter, not resourceGroup().location or deployment().location (except when used as a default value in the main template)" -ErrorId Location.Parameter.Should.Be.Used -TargetObject $parameter
+    Write-Error "$TemplateFileName must use the location parameter, not resourceGroup().location or deployment().location (except when used as a default value in the main template)" -ErrorId Location.Parameter.Should.Be.Used -TargetObject $parameter
 }
 

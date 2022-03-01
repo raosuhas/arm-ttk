@@ -26,8 +26,6 @@ This test should flag any parameters that look like they might be used as passwo
 
 #>
 
-$MarketplaceWarning = $false
-
 # find all parameters
 foreach ($parameter in $templateObject.parameters.psobject.properties) {
     
@@ -57,7 +55,7 @@ foreach ($parameter in $templateObject.parameters.psobject.properties) {
                 Write-Warning "Skipping parameter `"$name`""
             }
             else {
-                Write-TtkMessage -MarketplaceWarning $MarketplaceWarning -Message "Parameter `"$name`" is of type `"$type`" but should be secure." -ErrorId Password.Param.Not.Secure -TargetObject $parameter
+                Write-Error -Message "Parameter `"$name`" is of type `"$type`" but should be secure." -ErrorId Password.Param.Not.Secure -TargetObject $parameter
             }      
         }
     }

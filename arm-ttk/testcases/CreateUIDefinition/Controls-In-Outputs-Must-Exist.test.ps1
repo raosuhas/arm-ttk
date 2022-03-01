@@ -11,8 +11,6 @@ param(
 $CreateUIDefinitionObject
 )
 
-$MarketplaceWarning = $false
-
 $basicsOrSteps = [Regex]::new(@'
 \s{0,}       # Optional whitespace
 \[           # opening bracket
@@ -61,7 +59,7 @@ foreach ($CreateUIOutput in $CreateUIDefinitionObject.parameters.outputs.psobjec
             $FoundControl = $CreateUIDefinitionObject.parameters.basics | 
                 Where-Object Name -EQ $ControlName
             if (-not $FoundControl) {
-                Write-TtkMessage -MarketplaceWarning $MarketplaceWarning "Could not find control '$controlName' in .parameters.basics" -ErrorId ControlName.Not.Found -TargetObject $match
+                Write-Error "Could not find control '$controlName' in .parameters.basics" -ErrorId ControlName.Not.Found -TargetObject $match
             }
         }
 
@@ -70,7 +68,7 @@ foreach ($CreateUIOutput in $CreateUIDefinitionObject.parameters.outputs.psobjec
             $FoundStep = $CreateUIDefinitionObject.parameters.steps | 
                 Where-Object Name -EQ $stepName
             if (-not $FoundStep) {
-                Write-TtkMessage -MarketplaceWarning $MarketplaceWarning "Could not find step '$stepName' in .parameters.steps" -ErrorId StepName.Not.Found -TargetObject $match
+                Write-Error "Could not find step '$stepName' in .parameters.steps" -ErrorId StepName.Not.Found -TargetObject $match
             } else {
                 $elementName = $match.Groups['ElementName'].Value
                 if ($elementName) {
@@ -78,7 +76,7 @@ foreach ($CreateUIOutput in $CreateUIDefinitionObject.parameters.outputs.psobjec
                         Where-Object Name -eq $elementName
 
                     if (-not $foundElement) {
-                        Write-TtkMessage -MarketplaceWarning $MarketplaceWarning "Count not find element '$elementName' in .parameters.steps.$stepName" -ErrorId ElementName.Not.Found -TargetObject $match
+                        Write-Error "Count not find element '$elementName' in .parameters.steps.$stepName" -ErrorId ElementName.Not.Found -TargetObject $match
                     }
                 }
             }

@@ -11,8 +11,6 @@ param(
     $CreateUIDefinitionObject
 )
 
-$MarketplaceWarning = $false
-
 # First, find all textboxes within CreateUIDefinition.
 
 $allTextBoxes = $CreateUiDefinitionObject | Find-JsonContent -Key type -value Microsoft.Common.TextBox
@@ -25,7 +23,7 @@ foreach ($textbox in $allTextBoxes) {
     # Then we walk over each textbox.
     if (-not $textbox.constraints) {
         # If constraints was missing or blank,
-        Write-TtkMessage -MarketplaceWarning $MarketplaceWarning -Message "Textbox $($textbox.Name) is missing constraints" -ErrorId Textboxes.Are.Well.Formed.Missing.Constraints -TargetObject $textbox # error
+        Write-Error -Message "Textbox $($textbox.Name) is missing constraints" -ErrorId Textboxes.Are.Well.Formed.Missing.Constraints -TargetObject $textbox # error
         continue # and continue (since additional failures would be noise).
     }
     $constraintRegexString = "";
@@ -40,12 +38,12 @@ foreach ($textbox in $allTextBoxes) {
         $constraintRegexString = $textbox.constraints.regex
         if (-not $textbox.constraints.validationMessage) {
             # If there's not a validation message
-            Write-TtkMessage -MarketplaceWarning $MarketplaceWarning -Message "Textbox $($textbox.Name) is missing constraints.validationMessage" -ErrorId Textboxes.Are.Well.Formed.Missing.Constraints.ValidationMessage -TargetObject $textbox #error.
+            Write-Error -Message "Textbox $($textbox.Name) is missing constraints.validationMessage" -ErrorId Textboxes.Are.Well.Formed.Missing.Constraints.ValidationMessage -TargetObject $textbox #error.
         }
     }
     if (-not $constraintRegexString ) {
         # If the constraint didn't have a regex,
-        Write-TtkMessage -MarketplaceWarning $MarketplaceWarning -Message "Textbox $($textbox.Name) is missing constraints.regex or regex property in constraints.validations" -ErrorId Textboxes.Are.Well.Formed.Missing.Constraints.Regex -TargetObject $textbox #error.
+        Write-Error -Message "Textbox $($textbox.Name) is missing constraints.regex or regex property in constraints.validations" -ErrorId Textboxes.Are.Well.Formed.Missing.Constraints.Regex -TargetObject $textbox #error.
     }
     else {
         try {
@@ -60,7 +58,7 @@ foreach ($textbox in $allTextBoxes) {
         }
         catch {
             $err = $_ # if that fails, 
-            Write-TtkMessage -MarketplaceWarning $MarketplaceWarning -Message "Textbox $($textbox.Name) regex is invalid: $($err)" -ErrorId Textboxes.Are.Well.Formed.Invalid.Constraints.Regex.Expressison -TargetObject $textbox #error.
+            Write-Error -Message "Textbox $($textbox.Name) regex is invalid: $($err)" -ErrorId Textboxes.Are.Well.Formed.Invalid.Constraints.Regex.Expressison -TargetObject $textbox #error.
         }
     }
 }

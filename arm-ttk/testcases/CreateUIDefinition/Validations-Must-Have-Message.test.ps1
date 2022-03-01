@@ -11,8 +11,6 @@ param(
     $CreateUIDefinitionObject
 )
 
-$MarketplaceWarning = $false
-
 # Find any item property in CreateUIDefinition that uses validations
 $constraints = @($CreateUIDefinitionObject | 
     Find-JsonContent -Key validations -Value * -Like)
@@ -30,7 +28,7 @@ foreach ($cobj in $constraints) {
                     $object_properties.Name; break
                 }
             }
-            Write-TtkMessage -MarketplaceWarning $MarketplaceWarning -Message "Validations property in $($parent.Name) is missing message for $($key)." -ErrorId Validations.Must.Have.Message -TargetObject $parent #error.
+            Write-Error -Message "Validations property in $($parent.Name) is missing message for $($key)." -ErrorId Validations.Must.Have.Message -TargetObject $parent #error.
         }
     }
 }

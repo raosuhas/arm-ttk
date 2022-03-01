@@ -19,8 +19,6 @@ $ControlTypesWithHideExisting = @(
 )
 )
 
-$MarketplaceWarning = $false
-
 # Walk over each potential control type.
 foreach ($controlType in $ControlTypesWithHideExisting) {
 
@@ -34,10 +32,10 @@ foreach ($controlType in $ControlTypesWithHideExisting) {
             # determine the output values
             $outputValues = @($CreateUIDefinitionObject.parameters.outputs.psobject.properties | Select-Object -ExpandProperty Value)
             if (-not ($outputValues -like "*$($foundControl.Name)*.ResourceGroup*" )) { # error if there is no 'ResourceGroup' output.
-                Write-TtkMessage -MarketplaceWarning $MarketplaceWarning "Control Named '$($foundControl.name)' must output the resourceGroup property when hideExisting is false." -TargetObject $foundControl -ErrorId Missing.Output.ResourceGroup
+                Write-Error "Control Named '$($foundControl.name)' must output the resourceGroup property when hideExisting is false." -TargetObject $foundControl -ErrorId Missing.Output.ResourceGroup
             }
             if (-not ($outputValues -like "*$($foundControl.Name)*.NewOrExisting*" )) { # error if there is no 'NewOrExisting' output.
-                Write-TtkMessage -MarketplaceWarning $MarketplaceWarning "Control Named '$($foundControl.name)' must output the newOrExisting property when hideExisting is false." -TargetObject $foundControl -ErrorId Missing.Output.NewOrExisting
+                Write-Error "Control Named '$($foundControl.name)' must output the newOrExisting property when hideExisting is false." -TargetObject $foundControl -ErrorId Missing.Output.NewOrExisting
             }
         }        
     }

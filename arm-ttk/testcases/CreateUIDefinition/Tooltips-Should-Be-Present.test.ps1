@@ -14,8 +14,6 @@ param(
     $CreateUIDefinitionObject
 )
 
-$MarketplaceWarning = $false
-
 # Find all Microsoft controls in CreateUIDefinition
 $shouldHaveTooltips = $CreateUIDefinitionObject | 
     Find-JsonContent -Key type -Value Microsoft.*.* -Like
@@ -31,7 +29,7 @@ foreach ($shouldHave in $shouldHaveTooltips) {
         if (-not "$($shouldHave.tooltip)".Trim()) {
             # If there was no tool tip property, or the tooltip was only whitespace
             # write an error.
-            Write-TtkMessage -MarketplaceWarning $MarketplaceWarning "Element missing tooltip: $($shouldHave.Name)" -TargetObject $shouldHave
+            Write-Error "Element missing tooltip: $($shouldHave.Name)" -TargetObject $shouldHave
         }
     }
 } 

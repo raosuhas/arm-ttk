@@ -10,7 +10,6 @@ param(
 $TemplateObject
 )
 
-$MarketplaceWarning = $false
 
 # Find all references to an commandToExecute.
 $commandsToExecute = $TemplateObject | 
@@ -25,7 +24,7 @@ foreach ($command in $commandsToExecute) {
     $commandUsesAListFunction = "$($command.commandToExecute)" | ?<ARM_List_Function>
 
     if ($commandUsesAListFunction) {
-        Write-TtkMessage -MarketplaceWarning $MarketplaceWarning "CommandToExecute uses '$commandUsesAListFunction', but is not in .protectedSettings" -ErrorId CommandToExecute.Unprotected.List -TargetObject $command
+        Write-Error "CommandToExecute uses '$commandUsesAListFunction', but is not in .protectedSettings" -ErrorId CommandToExecute.Unprotected.List -TargetObject $command
         continue
     }
 
@@ -37,7 +36,7 @@ foreach ($command in $commandsToExecute) {
     foreach ($ref in $commandToExecuteReferencedParameters) {
         $refType = $TemplateObject.Parameters.$ref.type
         if ($refType -in 'SecureString', 'SecureObject') {            
-            Write-TtkMessage -MarketplaceWarning $MarketplaceWarning "CommandToExecute references parameter '$ref' of type '$refType', but is not in .protectedSettings" -ErrorId CommandToExecute.Unprotected.Parameter -TargetObject $command
+            Write-Error "CommandToExecute references parameter '$ref' of type '$refType', but is not in .protectedSettings" -ErrorId CommandToExecute.Unprotected.Parameter -TargetObject $command
             continue
         }
     }

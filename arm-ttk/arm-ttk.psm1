@@ -14,8 +14,6 @@ if ($PSVersionTable.PSEdition -ne 'Core') {
 . $PSScriptRoot\Test-AzTemplate.ps1
 
 . $PSScriptRoot\Format-AzTemplate.ps1
-. $PSScriptRoot\Utilities.ps1
-
 #endregion Template Functions
 
 #region Cache Functions

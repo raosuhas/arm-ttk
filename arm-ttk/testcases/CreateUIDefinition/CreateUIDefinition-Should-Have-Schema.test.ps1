@@ -14,18 +14,16 @@ param(
 $CreateUIDefinitionObject
 )
 
-$MarketplaceWarning = $false
-
 if (-not $CreateUIDefinitionObject.'$Schema') {
-    Write-TtkMessage -MarketplaceWarning $MarketplaceWarning -Message "CreateUIDefinition is missing a `$schema property" -ErrorId CreateUIDef.Must.Have.Schema
+    Write-Error -Message "CreateUIDefinition is missing a `$schema property" -ErrorId CreateUIDef.Must.Have.Schema
 }
 
 if ($CreateUIDefinitionObject.'$schema' -cne 'https://schema.management.azure.com/schemas/0.1.2-preview/CreateUIDefinition.MultiVm.json#') {
-    Write-TtkMessage -MarketplaceWarning $MarketplaceWarning -Message "CreateUIDefintion has an incorrect schema.  Schema must be https://schema.management.azure.com/schemas/0.1.2-preview/CreateUIDefinition.MultiVm.json#, and is '$($CreateUIDefinitionObject.'$schema')'" -ErrorId CreateUIDef.Incorrect.Schema
+    Write-Error -Message "CreateUIDefintion has an incorrect schema.  Schema must be https://schema.management.azure.com/schemas/0.1.2-preview/CreateUIDefinition.MultiVm.json#, and is '$($CreateUIDefinitionObject.'$schema')'" -ErrorId CreateUIDef.Incorrect.Schema
 }
 
 if (-not $CreateUIDefinitionObject.version) {
-    Write-TtkMessage -MarketplaceWarning $MarketplaceWarning -Message "CreateUIDefinition is missing a version" -ErrorId CreateUIDef.Must.Have.Version
+    Write-Error -Message "CreateUIDefinition is missing a version" -ErrorId CreateUIDef.Must.Have.Version
 }
 
 # Remove any preview chunk and cast the remaining portion as a version (make clearer)
@@ -38,5 +36,5 @@ $schemaVersion = $CreateUIDefinitionObject.'$Schema' -split '/' -ne '' |
     Select-Object -First 1
 
 if ($CreateUIDefinitionObject.version -ne $schemaVersion) {
-    Write-TtkMessage -MarketplaceWarning $MarketplaceWarning -Message "CreateUIDefinition version ($($CreateUIDefinitionObject.version)) is different from schema version ($schemaVersion)" -ErrorId CreateUIDef.Version.Mismatch
+    Write-Error -Message "CreateUIDefinition version ($($CreateUIDefinitionObject.version)) is different from schema version ($schemaVersion)" -ErrorId CreateUIDef.Version.Mismatch
 }

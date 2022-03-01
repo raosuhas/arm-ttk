@@ -13,8 +13,6 @@ param(
 $CreateUIDefinitionObject
 )
 
-$MarketplaceWarning = $false
-
 # First, find all password boxes.
 $passwordBoxes = $CreateUIDefinitionObject | 
     Find-JsonContent -Key type -Value Microsoft.Common.PasswordBox
@@ -31,7 +29,7 @@ foreach ($credBox in $allCredentialBoxes) { # Walk thru the list
    
     if ($credBox.options.hideConfirmation -eq $true) { # If the options has hideConfirmation set to true
         # write an error
-        Write-TtkMessage -MarketplaceWarning $MarketplaceWarning "`"hideConfirmation`" must not be true for credentials" -TargetObject $credBox -ErrorId Confirmation.Should.Not.Be.Hidden
+        Write-Error "`"hideConfirmation`" must not be true for credentials" -TargetObject $credBox -ErrorId Confirmation.Should.Not.Be.Hidden
     }
 }
  
